@@ -252,7 +252,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/styles/mixin.scss";
+@import "~@/views/styles/mixin.scss";
 
 .createPost-container {
   position: relative;

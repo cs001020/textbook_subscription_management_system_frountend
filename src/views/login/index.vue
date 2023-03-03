@@ -1,6 +1,13 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      autocomplete="on"
+      label-position="left"
+    >
 
       <div class="title-container">
         <h3 class="title">
@@ -15,7 +22,7 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="loginForm.account"
           :placeholder="$t('login.username')"
           name="username"
           type="text"
@@ -48,26 +55,43 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
+      <el-form-item
+        prop="captcha"
+        :rules="[
+          { required: true, message: '验证码不能为空'}
+        ]"
+      >
+        <div class="captcha-div">
+          <el-input v-model="loginForm.captcha" class="captcha-input" />
+          <el-image style="height: 50px" :src="imgCaptcha.captchaBase64Data" @click="getImgCaptcha()" />
+        </div>
+      </el-form-item>
+
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >
         {{ $t('login.logIn') }}
       </el-button>
 
-      <div style="position:relative">
-        <div class="tips">
-          <span>{{ $t('login.username') }} : admin</span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">
-            {{ $t('login.username') }} : editor
-          </span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
+      <!--      <div style="position:relative">-->
+      <!--        <div class="tips">-->
+      <!--          <span>{{ $t('login.username') }} : admin</span>-->
+      <!--          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
+      <!--        </div>-->
+      <!--        <div class="tips">-->
+      <!--          <span style="margin-right:18px;">-->
+      <!--            {{ $t('login.username') }} : editor-->
+      <!--          </span>-->
+      <!--          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>-->
+      <!--        </div>-->
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          {{ $t('login.thirdparty') }}
-        </el-button>
-      </div>
+      <!--        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">-->
+      <!--          {{ $t('login.thirdparty') }}-->
+      <!--        </el-button>-->
+      <!--      </div>-->
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
@@ -84,6 +108,7 @@
 import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
+import captcha from '@/api/captcha'
 
 export default {
   name: 'Login',
@@ -105,19 +130,26 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        account: 'test',
+        password: '123456',
+        captcha: '',
+        captchaUid: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        account: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        captcha: [{ required: true, trigger: 'blur', message: '请输入验证码' }]
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      imgCaptcha: {
+        'captchaBase64Data': '',
+        'captchaUid': ''
+      }
     }
   },
   watch: {
@@ -134,6 +166,9 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
+    // 为给定 ID 的 user 创建请求
+    // 获取图片验证码
+    this.getImgCaptcha()
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -146,6 +181,12 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    getImgCaptcha() {
+      captcha.img().then(res => {
+        this.imgCaptcha.captchaBase64Data = res.data.captcha
+        this.imgCaptcha.captchaUid = res.data.uid
+      })
+    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
@@ -161,6 +202,7 @@ export default {
       })
     },
     handleLogin() {
+      this.loginForm.captchaUid = this.imgCaptcha.captchaUid
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -208,12 +250,23 @@ export default {
 }
 </script>
 
+<style scoped>
+.captcha-input {
+  width: auto;
+  margin-right: 10px;
+}
+.captcha-div{
+  display: flex;
+}
+
+</style>
+
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -256,9 +309,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
