@@ -6,9 +6,6 @@
 
 <script>
 export default {
-  name: 'App',
-  created() {
-    new WebSocket()
-  }
+  name: 'App'
 }
 </script>

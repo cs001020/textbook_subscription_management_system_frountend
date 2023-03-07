@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryForm" :model="queryParams" size="small" :inline="true" label-width="68px">
-      <el-form-item label="登录地址" prop="ipaddr">
+      <el-form-item label="登录地址" prop="ip">
         <el-input
-          v-model="queryParams.ipaddr"
+          v-model="queryParams.ip"
           placeholder="请输入登录地址"
           clearable
           style="width: 240px;"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
+      <el-form-item label="用户名称" prop="name">
         <el-input
-          v-model="queryParams.userName"
+          v-model="queryParams.name"
           placeholder="请输入用户名称"
           clearable
           style="width: 240px;"
@@ -27,10 +27,8 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.sys_common_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            label="dict.label"
+            value="dict.value"
           />
         </el-select>
       </el-form-item>
@@ -55,39 +53,6 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          v-hasPermi="['monitor:logininfor:remove']"
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          v-hasPermi="['monitor:logininfor:remove']"
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          @click="handleClean"
-        >清空</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          v-hasPermi="['monitor:logininfor:unlock']"
-          type="primary"
-          plain
-          icon="el-icon-unlock"
-          size="mini"
-          :disabled="single"
-          @click="handleUnlock"
-        >解锁</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          v-hasPermi="['monitor:logininfor:export']"
           type="warning"
           plain
           icon="el-icon-download"
@@ -95,26 +60,24 @@
           @click="handleExport"
         >导出</el-button>
       </el-col>
-      <right-toolbar :show-search.sync="showSearch" @queryTable="getList" />
     </el-row>
 
-    <el-table ref="tables" v-loading="loading" :data="list" :default-sort="defaultSort" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="访问编号" align="center" prop="infoId" />
-      <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
-      <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
+    <el-table ref="tables" v-loading="loading" :data="list">
+      <el-table-column label="访问编号" align="center" prop="id" />
+      <el-table-column label="用户名称" align="center" prop="account" :show-overflow-tooltip="true" />
+      <el-table-column label="登录地址" align="center" prop="ip" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
       <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
       <el-table-column label="操作系统" align="center" prop="os" />
-      <el-table-column label="登录状态" align="center" prop="status">
+      <el-table-column label="登录状态" align="center" prop="state">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status" />
+          <el-tag :type="scope.row.state |loginStateFilter">{{ scope.row.state }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作信息" align="center" prop="msg" :show-overflow-tooltip="true" />
-      <el-table-column label="登录日期" align="center" prop="loginTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="180">
+      <el-table-column label="操作信息" align="center" prop="message" :show-overflow-tooltip="true" />
+      <el-table-column label="登录日期" align="center" prop="accessTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.loginTime) }}</span>
+          <span>{{ scope.row.accessTime | parseTime }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -122,19 +85,34 @@
     <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.page"
+      :limit.sync="queryParams.size"
       @pagination="getList"
     />
   </div>
 </template>
 
 <script>
-// import { list, delLogininfor, cleanLogininfor, unlockLogininfor } from '@/api/monitor/logininfor'
+import api from '@/api/log'
+import { parseTime } from '@/utils'
+import pagination from '@/components/Pagination/index.vue'
+import axios from 'axios'
+import { getToken } from '@/utils/auth'
+import { saveAs } from 'file-saver'
 
 export default {
   name: 'Logininfor',
-  dicts: ['sys_common_status'],
+  components: { pagination },
+  filters: {
+    parseTime,
+    loginStateFilter(state) {
+      const map = {
+        '登陆成功': undefined,
+        '登陆失败': 'danger'
+      }
+      return map[state]
+    }
+  },
   data() {
     return {
       // 遮罩层
@@ -159,11 +137,13 @@ export default {
       defaultSort: { prop: 'loginTime', order: 'descending' },
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        ipaddr: undefined,
-        userName: undefined,
-        status: undefined
+        page: 1,
+        size: 10,
+        ip: undefined,
+        name: undefined,
+        status: undefined,
+        beginTime: undefined,
+        endTime: undefined
       }
     }
   },
@@ -174,9 +154,8 @@ export default {
     /** 查询登录日志列表 */
     getList() {
       this.loading = true
-      // eslint-disable-next-line no-undef
-      list(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-        this.list = response.rows
+      api.loginList(this.queryParams).then(response => {
+        this.list = response.data
         this.total = response.total
         this.loading = false
       }
@@ -240,9 +219,16 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('monitor/logininfor/export', {
-        ...this.queryParams
-      }, `logininfor_${new Date().getTime()}.xlsx`)
+      axios({
+        method: 'post',
+        url: process.env.VUE_APP_BASE_API + '/log/login/export',
+        headers: { 'Authentication': getToken() },
+        responseType: 'arraybuffer',
+        data: this.queryParams
+      }).then(res => {
+        const blob = new Blob([res.data])
+        saveAs(blob, `LoginLog_${new Date().getTime()}.xlsx`)
+      })
     }
   }
 }
