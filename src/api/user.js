@@ -14,6 +14,7 @@ export function getInfo() {
     method: 'get'
   })
 }
+
 export function logout() {
   return request({
     url: '/user/logout',
@@ -25,5 +26,13 @@ export function teacher() {
   return request({
     url: '/user/teacher',
     method: 'get'
+  })
+}
+
+export function list(params) {
+  return request({
+    url: '/user/list',
+    method: 'get',
+    params: params
   })
 }
