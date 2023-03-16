@@ -108,7 +108,7 @@
 import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
-import captcha from '@/api/captcha'
+import captcha from '@/api/system/captcha'
 
 export default {
   name: 'Login',
