@@ -32,17 +32,6 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <!-- <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-            >编辑
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-            >删除
-          </el-button>
-        </template> -->
         <template slot-scope="{ row, $index }">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t("table.edit") }}
@@ -159,17 +148,16 @@ export default {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
+      }).then(() => {
+        grade.delete(row.id).then(
+          this.getDate(),
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+        )
       })
-        .then(() => {
-          grade.delete(row.id).then(
-            this.getDate(),
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-          )
-        })
         .catch(() => {
           this.$notify.info({
             title: '消息',
@@ -177,9 +165,6 @@ export default {
             duration: 2000
           })
         })
-      //   this.$nextTick(() => {
-      //   this.$forceUpdate();
-      // });
     },
     handleCreate() {
       major.all().then(res => {

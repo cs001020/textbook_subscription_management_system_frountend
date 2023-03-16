@@ -14,6 +14,12 @@ export default {
       method: 'get',
       params: { ids }
     })
+  },
+  me() {
+    return request({
+      url: '/textbook/me',
+      method: 'get'
+    })
   }
 }
 
