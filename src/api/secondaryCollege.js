@@ -7,10 +7,24 @@ export default {
       method: 'get'
     })
   },
+  add(data) {
+    return request({
+      url: '/secondaryCollege/add',
+      method: 'post',
+      data
+    })
+  },
   delete(id) {
     return request({
       url: `/secondaryCollege/delete/${id}`,
       method: 'delete'
+    })
+  },
+  update(id, data) {
+    return request({
+      url: `/secondaryCollege/update/${id}`,
+      method: 'put',
+      data
     })
   }
 }
