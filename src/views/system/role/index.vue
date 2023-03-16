@@ -224,7 +224,7 @@
 <script>
 // import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect } from '@/api/system/role'
 // import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
-import { list } from '@/api/role'
+import { list } from '@/api/system/role'
 import Pagination from '@/components/Pagination/index.vue'
 
 export default {

@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import textbook from '@/api/textbook'
+import textbook from '@/api/textbookSubscription/textbook'
 
 export default {
   data() {

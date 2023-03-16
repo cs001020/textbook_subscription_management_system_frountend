@@ -237,7 +237,7 @@
 </template>
 
 <script>
-import { list } from '@/api/user'
+import { list } from '@/api/system/user'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
 

@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import openingPlan from '@/api/openingPlan'
+import openingPlan from '@/api/academic/openingPlan'
 
 export default {
   filters: {

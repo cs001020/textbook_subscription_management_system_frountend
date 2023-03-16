@@ -1,4 +1,4 @@
-import variables from '@/views/styles/element-variables.scss'
+import variables from '@/assets/styles/element-variables.scss'
 import defaultSettings from '@/settings'
 
 const { showSettings, tagsView, fixedHeader, sidebarLogo, supportPinyinSearch } = defaultSettings

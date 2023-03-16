@@ -86,8 +86,8 @@
 </template>
 
 <script>
-import grade from '@/api/grade'
-import major from '@/api/major'
+import grade from '@/api/academic/grade'
+import major from '@/api/academic/major'
 import { parseTime } from '@/utils'
 
 export default {

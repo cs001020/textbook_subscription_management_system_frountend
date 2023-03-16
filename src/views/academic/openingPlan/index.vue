@@ -104,8 +104,8 @@
 </template>
 
 <script>
-import openingPlan from '@/api/openingPlan'
-import Add from '@/views/openPlan/components/add.vue'
+import openingPlan from '@/api/academic/openingPlan'
+import Add from '@/views/commons/components/add.vue'
 
 export default {
   components: { Add },

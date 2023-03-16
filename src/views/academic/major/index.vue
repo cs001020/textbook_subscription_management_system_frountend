@@ -105,8 +105,8 @@
 </template>
 
 <script>
-import major from '@/api/major'
-import secondaryCollege from '@/api/secondaryCollege'
+import major from '@/api/academic/major'
+import secondaryCollege from '@/api/academic/secondaryCollege'
 import { parseTime } from '@/utils'
 
 export default {

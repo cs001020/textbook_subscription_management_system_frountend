@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import api from '@/api/teachingGroup'
+import api from '@/api/academic/teachingGroup'
 import { parseTime } from '@/utils'
 
 export default {

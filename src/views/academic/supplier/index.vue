@@ -109,7 +109,7 @@
 
 <script>
 import waves from '@/directive/waves' // waves directive
-import supplier from '@/api/supplier'
+import supplier from '@/api/academic/supplier'
 
 export default {
   name: 'ComplexTable',

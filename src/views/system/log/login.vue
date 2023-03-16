@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import api from '@/api/log'
+import api from '@/api/system/log'
 import { parseTime } from '@/utils'
 import pagination from '@/components/Pagination/index.vue'
 import axios from 'axios'

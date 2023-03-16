@@ -91,9 +91,9 @@
 </template>
 
 <script>
-import openingPlan from '@/api/openingPlan'
-import Select from '@/views/openPlan/components/select.vue'
-import approval from '@/api/approval'
+import openingPlan from '@/api/academic/openingPlan'
+import Select from '@/views/commons/components/select.vue'
+import approval from '@/api/textbookSubscription/approval'
 export default {
   components: { Select },
   filters: {

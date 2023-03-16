@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import api from '@/api/Permission'
+import api from '@/api/system/Permission'
 
 const defaultForm = {
   id: '',

@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import api from '@/api/secondaryCollege'
+import api from '@/api/academic/secondaryCollege'
 import { parseTime } from '@/utils'
 
 export default {

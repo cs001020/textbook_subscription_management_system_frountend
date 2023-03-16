@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import ApprovalTable from '@/views/approval/component/approvalTable.vue'
-import approval from '@/api/approval'
+import ApprovalTable from '@/views/commons/components/approvalTable.vue'
+import approval from '@/api/textbookSubscription/approval'
 
 export default {
   components: { ApprovalTable },

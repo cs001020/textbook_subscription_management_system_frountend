@@ -3,11 +3,14 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
+import './assets/styles/element-variables.scss'
+
+import '@/assets/styles/ruoyi.scss' // ruoyi css
 
 import Element from 'element-ui'
-import './views/styles/element-variables.scss'
+import './assets/styles/element-variables.scss'
 
-import '@/views/styles/index.scss' // global css
+import '@/assets/styles/index.scss' // global css
 
 import App from './App'
 import store from './store'

@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import textbookOrder from '@/api/textbookOrder'
+import textbookOrder from '@/api/textbookSubscription/textbookOrder'
 import { parseTime } from '@/utils'
-import ApprovalTable from '@/views/approval/component/approvalTable.vue'
+import ApprovalTable from '@/views/commons/components/approvalTable.vue'
 export default {
   // eslint-disable-next-line vue/no-unused-components
   components: { ApprovalTable },
