@@ -18,6 +18,20 @@ export default {
       url: `/grade/delete/${id}`,
       method: 'delete'
     })
+  },
+  add(data) {
+    return request({
+      url: `/grade/add`,
+      method: 'post',
+      data
+    })
+  },
+  update(id, data) {
+    return request({
+      url: `/grade/update/${id}`,
+      method: 'put',
+      data
+    })
   }
 }
 

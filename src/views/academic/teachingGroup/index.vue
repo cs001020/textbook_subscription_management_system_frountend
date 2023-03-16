@@ -1,28 +1,30 @@
 <template>
   <div class="app-container">
-    <el-table
-      v-loading="loading"
-      :data="tableData"
-      border
-      style="width: 100%"
-    >
-      <el-table-column label="序号" type="index" />
-      <el-table-column
-        label="创建时间"
-        width="180"
+    <div class="filter-container">
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
       >
+        {{ $t("table.add") }}
+      </el-button>
+    </div>
+    <el-table v-loading="loading" :data="tableData" border style="width: 100%">
+      <el-table-column label="序号" type="index" />
+      <el-table-column label="创建时间" width="180">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span style="margin-left: 10px">{{ scope.row.createTime | parseTime }}</span>
+          <span style="margin-left: 10px">{{
+            scope.row.createTime | parseTime
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="姓名"
-        width="180"
-      >
+      <el-table-column label="组名" width="auto">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>姓名: {{ scope.row.name }}</p>
+            <p>组名: {{ scope.row.name }}</p>
             <div slot="reference" class="name-wrapper">
               <el-tag size="medium">{{ scope.row.name }}</el-tag>
             </div>
@@ -30,21 +32,55 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >编辑
+        <!-- <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            >编辑
           </el-button>
           <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
-          >删除
+            >删除
+          </el-button>
+        </template> -->
+        <template slot-scope="{ row, $index }">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            {{ $t("table.edit") }}
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(row, $index)"
+          >
+            {{ $t("table.delete") }}
           </el-button>
         </template>
+
       </el-table-column>
     </el-table>
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="教学组名" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          {{ $t("table.cancel") }}
+        </el-button>
+        <el-button
+          type="primary"
+          @click="dialogStatus === 'create' ? createData() : updateData()"
+        >
+          {{ $t("table.confirm") }}
+        </el-button>
+      </div>
+      <!-- <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="createData">确 定</el-button>
+  </div> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -58,12 +94,24 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        id: '2016-05-02',
-        name: '王小虎',
-        createTime: '上海市普陀区金沙江路 1518 弄'
-      }],
-      loading: false
+      tableData: [
+        {
+          id: '2016-05-02',
+          name: '王小虎',
+          createTime: '上海市普陀区金沙江路 1518 弄'
+        }
+      ],
+      loading: false,
+      dialogFormVisible: false,
+      form: {
+        name: ''
+      },
+      formLabelWidth: '120px',
+      dialogStatus: '',
+      textMap: {
+        update: 'Edit',
+        create: 'Create'
+      }
     }
   },
   created() {
@@ -72,7 +120,7 @@ export default {
   methods: {
     getDate() {
       this.loading = true
-      api.list().then(res => {
+      api.list().then((res) => {
         this.tableData = res.data
         // 伪装请求响应
         setTimeout(() => {
@@ -80,13 +128,92 @@ export default {
         }, 500)
       })
     },
-    handleEdit(index, row) {
-      console.log(index, row)
+    // handleEdit(index, row) {
+    //   console.log(index, row)
+    // },
+    resetForm() {
+      this.form = {
+        name: ''
+      }
     },
-    handleDelete(index, row) {
-      api.delete(row.id).then(() => {
-        alert('删除成功' + row.id)
+    handleUpdate(row) {
+      // console.log(row)
+      this.form = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs["dataForm"].clearValidate();
+      // });
+    },
+    updateData() {
+      // this.$refs["dataForm"].validate((valid) => {
+      //   if (valid) {
+      const formData = Object.assign({}, this.form)
+      formData.timestamp = +new Date(formData.timesform) // change Thu Nov 30 2023 16:41:05 GMT+0800 (CST) to 1512031311464
+      api.update(formData.id, formData).then(() => {
         this.getDate()
+        this.dialogFormVisible = false
+        this.$notify({
+          title: '成功',
+          message: '更新成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
+      // }
+      // });
+    },
+    handleDelete(row, index) {
+      // console.log(row, index);
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+        type: 'warning'
+      })
+        .then(() => {
+          api.delete(row.id).then(
+            this.getDate(),
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+          )
+        })
+        .catch(() => {
+          this.$notify.info({
+            title: '消息',
+            message: '已取消',
+            duration: 2000
+          })
+        })
+      //   this.$nextTick(() => {
+      //   this.$forceUpdate();
+      // });
+    },
+    // handleDelete(index, row) {
+    //   api.delete(row.id).then(() => {
+    //     alert("删除成功" + row.id)
+    //     this.getDate()
+    //   })
+    // },
+    handleCreate() {
+      this.resetForm()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+    },
+    createData() {
+      console.log(this.form)
+      api.add(this.form).then(res => {
+        this.getDate()
+        this.dialogFormVisible = false
+        // 清空dialog内表单数据。。。。
+        this.$notify({
+          title: '成功',
+          message: '创建成功',
+          type: 'success',
+          duration: 2000
+        })
       })
     }
   }
@@ -94,5 +221,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
