@@ -71,8 +71,8 @@
               <el-switch
                 v-model="scope.row.state"
                 :disabled="scope.row.name===$store.getters.name"
-                active-value="BAN"
-                inactive-value="NORMAL"
+                active-value="NORMAL"
+                inactive-value="BAN"
                 @change="handleStatusChange(scope.row)"
               />
             </template>

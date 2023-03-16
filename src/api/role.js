@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function list(params) {
+  return request({
+    url: '/role/list',
+    method: 'get',
+    params
+  })
+}
 export function getRoutes() {
   return request({
     url: '/vue-element-admin/routes',
