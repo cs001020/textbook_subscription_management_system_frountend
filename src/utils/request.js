@@ -47,13 +47,16 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
-      Message({
-        message: res.msg || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
+      // 500 异常警告
+      if (res.code === 500) {
+        Message({
+          message: res.msg || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+      // 401 未登陆异常
       if (res.code === 401) {
         // to re-login
         MessageBox.confirm('您已注销，您可以取消以留在此页面，或重新登录', 'Confirm logout', {
