@@ -57,8 +57,8 @@ service.interceptors.response.use(
       if (res.code === 401) {
         // to re-login
         MessageBox.confirm('您已注销，您可以取消以留在此页面，或重新登录', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: '重新登陆',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
