@@ -68,7 +68,6 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       const accessedRoutes = filterAsyncRoutes(store.getters.routers, roles)
-      // console.log(accessedRoutes);
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

@@ -59,7 +59,7 @@ service.interceptors.response.use(
       // 401 未登陆异常
       if (res.code === 401) {
         // to re-login
-        MessageBox.confirm('您已注销，您可以取消以留在此页面，或重新登录', 'Confirm logout', {
+        MessageBox.confirm('您已注销，您可以取消以留在此页面，或重新登录', '系统提示', {
           confirmButtonText: '重新登陆',
           cancelButtonText: '取消',
           type: 'warning'

@@ -96,6 +96,20 @@ export const constantRoutes = [
         meta: { title: 'profile', icon: 'user', noCache: true }
       }
     ]
+  },
+  // TODO 鉴权按需导入
+  {
+    path: '/system/user-auth',
+    hidden: true,
+    component: Layout,
+    children: [
+      {
+        path: 'role/:userId(\\d+)',
+        component: () => import('@/views/system/user/authRole'),
+        name: '分配角色',
+        meta: { title: '分配角色', activeMenu: '/system/user' }
+      }
+    ]
   }
 ]
 
@@ -103,8 +117,8 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-// TODO 用不上了
-export const asyncRoutes = []
+export const asyncRoutes = [
+]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
