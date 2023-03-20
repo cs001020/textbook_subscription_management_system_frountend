@@ -1,7 +1,7 @@
 <template>
   <el-card style="margin-bottom:20px;">
     <div slot="header" class="clearfix">
-      <span>About me</span>
+      <span>个人资料</span>
     </div>
 
     <div class="user-profile">
@@ -20,6 +20,12 @@
     <div class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>Education</span></div>
+        <div class="user-bio-section-body">
+          <div class="text-muted">
+            班级
+          </div>
+        </div>
+        <el-divider />
         <div class="user-bio-section-body">
           <div class="text-muted">
             JS in Computer Science from the University of Technology
