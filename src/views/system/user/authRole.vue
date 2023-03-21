@@ -23,6 +23,16 @@
       <el-table-column label="角色编号" align="center" prop="id" />
       <el-table-column label="角色名称" align="center" prop="description" />
       <el-table-column label="权限字符" align="center" prop="name" />
+      <el-table-column label="状态" align="center" width="100">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.state"
+            active-value="NORMAL"
+            inactive-value="DISABLE"
+            disabled
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime |parseTime }}</span>

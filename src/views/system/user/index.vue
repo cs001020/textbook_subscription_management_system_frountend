@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 查询 -->
-    <el-form v-show="showSearch" ref="queryForm" :model="queryParams" size="small" :inline="true" label-width="68px">
+    <el-form ref="queryForm" :model="queryParams" size="small" :inline="true" label-width="68px">
       <el-form-item label="用户名称" prop="userName">
         <el-input
           v-model="queryParams.account"
@@ -197,8 +197,6 @@ export default {
     return {
       // 遮罩层
       loading: true,
-      // 显示搜索条件
-      showSearch: true,
       // 总条数
       total: 0,
       // 用户表格数据
