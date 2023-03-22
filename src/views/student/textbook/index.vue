@@ -1,5 +1,10 @@
 <template>
   <div class="app-container">
+    <el-card v-if="textBookList.length===0" class="box-card">
+      <div class="text item">
+        暂无图书
+      </div>
+    </el-card>
     <el-row v-for="item in textBookList" :key="item.id">
       <el-card :key="item.id" :body-style="{ padding: '0px' }">
         <el-col :span="7">
@@ -45,7 +50,7 @@ import textbook from '@/api/textbookSubscription/textbook'
 export default {
   data() {
     return {
-      textBookList: undefined
+      textBookList: []
     }
   },
   created() {

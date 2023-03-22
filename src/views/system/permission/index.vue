@@ -58,7 +58,7 @@
       <el-table-column prop="name" label="菜单名称" :show-overflow-tooltip="true" width="160" />
       <el-table-column prop="icon" label="图标" width="100">
         <template slot-scope="scope">
-          <i :class="scope.row.icon" />
+          <i v-show="showElIcon(scope.row.icon)" :class="scope.row.icon" />
           <svg-icon :icon-class="scope.row.icon" />
         </template>
       </el-table-column>
@@ -89,6 +89,7 @@
             @click="handleUpdate(scope.row)"
           >修改</el-button>
           <el-button
+            v-if="scope.row.type!=='BUTTON_REQUEST'"
             size="mini"
             type="text"
             icon="el-icon-plus"
@@ -123,9 +124,9 @@
           <el-col :span="24">
             <el-form-item label="权限类型" prop="type">
               <el-radio-group v-model="form.type">
-                <el-radio label="DIRECTORY">目录</el-radio>
-                <el-radio label="ROUT">菜单</el-radio>
-                <el-radio label="BUTTON_REQUEST">按钮</el-radio>
+                <el-radio v-show="form.parentId===0" label="DIRECTORY">目录</el-radio>
+                <el-radio v-show="form.parentId!==0" label="ROUT">菜单</el-radio>
+                <el-radio v-show="form.parentId!==0" label="BUTTON_REQUEST">按钮</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -138,7 +139,7 @@
                 @show="$refs['iconSelect'].reset()"
               >
                 <IconSelect ref="iconSelect" @selected="selected" />
-                <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>
+                <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" clearable>
                   <svg-icon
                     v-if="form.icon"
                     slot="prefix"
@@ -169,7 +170,7 @@
                 </el-tooltip>
                 路由地址
               </span>
-              <el-input v-model="form.path" placeholder="请输入路由地址" />
+              <el-input v-model="form.path" placeholder="请输入路由地址" clearable />
             </el-form-item>
           </el-col>
           <el-col v-if="form.type === 'ROUT'" :span="12">
@@ -180,12 +181,12 @@
                 </el-tooltip>
                 组件路径
               </span>
-              <el-input v-model="form.component" placeholder="请输入组件路径" />
+              <el-input v-model="form.component" placeholder="请输入组件路径" clearable />
             </el-form-item>
           </el-col>
           <el-col v-if="form.type !== 'DIRECTORY'" :span="12">
             <el-form-item prop="perms">
-              <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
+              <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" clearable />
               <span slot="label">
                 <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
                   <i class="el-icon-question" />
@@ -234,7 +235,6 @@ export default {
   filters: {
     parseTime
   },
-  dicts: ['sys_show_hide', 'sys_normal_disable'],
   components: { TreeSelect, IconSelect },
   data() {
     return {
@@ -386,7 +386,15 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log(this.form)
+      if (this.form.type === 'BUTTON_REQUEST') {
+        this.form.component = undefined
+        this.form.path = undefined
+        this.form.icon = undefined
+      }
+      if (this.form.type === 'DIRECTORY') {
+        this.form.component = undefined
+        this.form.perms = undefined
+      }
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
@@ -429,6 +437,10 @@ export default {
     cancel() {
       this.open = false
       this.reset()
+    },
+    // 展示饿了么图标
+    showElIcon(icon) {
+      return icon.includes('el-icon')
     }
   }
 }

@@ -382,7 +382,7 @@ export default {
     },
     /** 查询菜单树结构 */
     getMenuTreeSelect() {
-      permission.findNodes().then(response => {
+      permission.list().then(response => {
         this.menuOptions = response.data
       })
     },
