@@ -274,7 +274,6 @@ export default {
     },
     // 用户状态修改
     handleStatusChange(row) {
-      console.log(row.state)
       const text = row.state === 'NORMAL' ? '启用' : '停用'
       this.$confirm('确认要"' + text + '""' + row.name + '"用户吗？').then(function() {
         return changeState({ id: row.id, state: row.state })

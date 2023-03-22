@@ -38,7 +38,7 @@ export function filterAsyncRoutes(routes, roles) {
           tmp.component = _import(tmp.component)// 导入组件
         } catch (error) {
           console.log(error)
-          tmp.component = _import('error-page/404')// 导入组件
+          tmp.component = () => import('@/views/commons/error-page/404')// 导入组件
         }
       }
     }
