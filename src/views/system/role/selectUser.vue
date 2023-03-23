@@ -61,6 +61,7 @@ export default {
   },
   props: {
     // 角色编号
+    // eslint-disable-next-line vue/require-default-prop
     roleId: {
       type: [Number, String]
     }
