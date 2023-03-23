@@ -32,28 +32,10 @@
         width="auto"
       >
         <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>二级学院: {{ scope.row.name }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-            </div>
-          </el-popover>
+          <el-tag size="medium">{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <!-- <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >编辑
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除
-          </el-button>
-        </template> -->
         <template slot-scope="{ row, $index }">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t("table.edit") }}
@@ -71,7 +53,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="教学组名" :label-width="formLabelWidth">
+        <el-form-item label="二级学院名" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -86,10 +68,6 @@
           {{ $t("table.confirm") }}
         </el-button>
       </div>
-      <!-- <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="createData">确 定</el-button>
-  </div> -->
     </el-dialog>
   </div>
 </template>
@@ -139,19 +117,12 @@ export default {
       }
     },
     handleUpdate(row) {
-      // console.log(row)
       this.form = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs["dataForm"].clearValidate();
-      // });
     },
     updateData() {
-      // this.$refs["dataForm"].validate((valid) => {
-      //   if (valid) {
       const formData = Object.assign({}, this.form)
-      formData.timestamp = +new Date(formData.timesform) // change Thu Nov 30 2023 16:41:05 GMT+0800 (CST) to 1512031311464
       api.update(formData.id, formData).then(() => {
         this.getDate()
         this.dialogFormVisible = false
@@ -162,50 +133,31 @@ export default {
           duration: 2000
         })
       })
-      // }
-      // });
     },
-    // handleEdit(index, row) {
-    //   console.log(index, row)
-    // },
     handleDelete(row, index) {
       // console.log(row, index);
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
+      }).then(function() {
+        return api.delete(row.id)
+      }).then(() => {
+        this.getDate()
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
       })
-        .then(() => {
-          api.delete(row.id).then(
-            this.getDate(),
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-          )
-        })
-        .catch(() => {
-          this.$notify.info({
-            title: '消息',
-            message: '已取消',
-            duration: 2000
-          })
-        })
     },
-    // handleDelete(index, row) {
-    //   api.delete(row.id).then(() => {
-    //     alert('删除成功' + row.id)
-    //     this.getDate()
-    //   })
-    // },
+
     handleCreate() {
       this.resetForm()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
     createData() {
-      console.log(this.form)
       api.add(this.form).then(res => {
         this.getDate()
         this.dialogFormVisible = false

@@ -124,6 +124,18 @@ export const constantRoutes = [
         meta: { title: '分配用户', activeMenu: '/system/role' }
       }
     ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    children: [
+      {
+        path: 'tet1',
+        component: () => import('@/views/student/test.vue'),
+        name: 'AuthUser',
+        meta: { title: '测试' }
+      }
+    ]
   }
 ]
 

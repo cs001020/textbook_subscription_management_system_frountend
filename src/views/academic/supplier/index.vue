@@ -127,7 +127,7 @@ export default {
           'name': '供应商史烨伟'
         }
       ],
-      listLoading: true,
+      listLoading: false,
       listQuery: {
         page: 1,
         limit: 20,
@@ -212,7 +212,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           supplier.update(tempData.id, tempData).then(() => {
             this.getList()
             this.dialogFormVisible = false
@@ -232,13 +231,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        supplier.delete(row.id).then(
-          this.getList(),
+        supplier.delete(row.id).then(() => {
+          this.getList()
           this.$notify({
             title: '成功',
             message: '删除成功',
             type: 'success'
           })
+        }
         )
       }).catch(() => {
         this.$notify.info({

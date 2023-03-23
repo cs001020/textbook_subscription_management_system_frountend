@@ -12,6 +12,7 @@
       </el-button>
     </div>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
       style="width: 100%"
@@ -31,28 +32,10 @@
         width="auto"
       >
         <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>专业: {{ scope.row.name }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-            </div>
-          </el-popover>
+          <el-tag size="medium">{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <!-- <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >编辑
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除
-          </el-button>
-        </template> -->
         <template slot-scope="{ row, $index }">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t("table.edit") }}
@@ -96,10 +79,6 @@
           {{ $t("table.confirm") }}
         </el-button>
       </div>
-      <!-- <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="createData">确 定</el-button>
-  </div> -->
     </el-dialog>
   </div>
 </template>
@@ -115,11 +94,8 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        id: '2016-05-02',
-        name: '王小虎',
-        createTime: '上海市普陀区金沙江路 1518 弄'
-      }],
+      loading: false,
+      tableData: [],
       dialogFormVisible: false,
       secondaryCollegeList: [],
       form: {
@@ -139,8 +115,10 @@ export default {
   },
   methods: {
     getDate() {
+      this.loading = true
       major.all().then(res => {
         this.tableData = res.data
+        this.loading = false
       })
     },
     resetForm() {
@@ -150,22 +128,15 @@ export default {
       }
     },
     handleUpdate(row) {
-      // console.log(row)
       secondaryCollege.list().then(res => {
         this.secondaryCollegeList = res.data
       })
       this.form = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs["dataForm"].clearValidate();
-      // });
     },
     updateData() {
-      // this.$refs["dataForm"].validate((valid) => {
-      //   if (valid) {
       const formData = Object.assign({}, this.form)
-      formData.timestamp = +new Date(formData.timesform) // change Thu Nov 30 2023 16:41:05 GMT+0800 (CST) to 1512031311464
       major.update(formData.id, formData).then(() => {
         this.getDate()
         this.dialogFormVisible = false
@@ -176,29 +147,23 @@ export default {
           duration: 2000
         })
       })
-      // }
-      // });
     },
-    // handleEdit(index, row) {
-    //   console.log(index, row)
-    // },
     handleDelete(row, index) {
-      // console.log(row, index);
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
+      }).then(() => {
+        major.delete(row.id).then(() => {
+          this.getDate()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+        }
+        )
       })
-        .then(() => {
-          major.delete(row.id).then(
-            this.getDate(),
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-          )
-        })
         .catch(() => {
           this.$notify.info({
             title: '消息',
@@ -206,16 +171,7 @@ export default {
             duration: 2000
           })
         })
-      //   this.$nextTick(() => {
-      //   this.$forceUpdate();
-      // });
     },
-    // handleDelete(index, row) {
-    //   major.delete(row.id).then(() => {
-    //     alert('删除成功' + row.id)
-    //     this.getDate()
-    //   })
-    // },
     handleCreate() {
       this.resetForm()
       secondaryCollege.list().then(res => {
@@ -225,7 +181,6 @@ export default {
       this.dialogFormVisible = true
     },
     createData() {
-      console.log(this.form)
       major.add(this.form).then(res => {
         this.getDate()
         this.dialogFormVisible = false

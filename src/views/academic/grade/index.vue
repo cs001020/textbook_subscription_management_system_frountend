@@ -11,7 +11,7 @@
         {{ $t("table.add") }}
       </el-button>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table v-loading="loading" :data="tableData" border style="width: 100%">
       <el-table-column label="序号" type="index" />
       <el-table-column label="创建时间" width="180">
         <template slot-scope="scope">
@@ -23,12 +23,7 @@
       </el-table-column>
       <el-table-column label="班级" width="auto">
         <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>班级: {{ scope.row.name }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-            </div>
-          </el-popover>
+          <el-tag size="medium">{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -77,10 +72,6 @@
           {{ $t("table.confirm") }}
         </el-button>
       </div>
-      <!-- <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="createData">确 定</el-button>
-  </div> -->
     </el-dialog>
   </div>
 </template>
@@ -96,14 +87,8 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          id: '2016-05-02',
-          name: '王小虎',
-          createTime: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
-
+      loading: false,
+      tableData: [],
       dialogFormVisible: false,
       majorList: [],
       form: {
@@ -124,38 +109,29 @@ export default {
   },
   methods: {
     getDate() {
+      this.loading = true
       grade.all().then((res) => {
         this.tableData = res.data
+        this.loading = false
       })
     },
     resetForm() {
-      this.form = {
-
-      }
+      this.form = {}
     },
-    // handleEdit(index, row) {
-    //   console.log(index, row);
-    // },
-    // handleDelete(index, row) {
-    //   grade.delete(row.id).then(() => {
-    //     alert("删除成功" + row.id);
-    //     this.getDate();
-    //   });
-    // },
     handleDelete(row, index) {
-      // console.log(row, index);
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning'
       }).then(() => {
-        grade.delete(row.id).then(
-          this.getDate(),
+        grade.delete(row.id).then(() => {
+          this.getDate()
           this.$notify({
             title: '成功',
             message: '删除成功',
             type: 'success'
           })
+        }
         )
       })
         .catch(() => {
@@ -188,22 +164,15 @@ export default {
       })
     },
     handleUpdate(row) {
-      // console.log(row)
       major.all().then(res => {
         this.majorList = res.data
       })
       this.form = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs["dataForm"].clearValidate();
-      // });
     },
     updateData() {
-      // this.$refs["dataForm"].validate((valid) => {
-      //   if (valid) {
       const formData = Object.assign({}, this.form)
-      formData.timestamp = +new Date(formData.timesform) // change Thu Nov 30 2023 16:41:05 GMT+0800 (CST) to 1512031311464
       grade.update(formData.id, formData).then(() => {
         this.getDate()
         this.dialogFormVisible = false
@@ -214,8 +183,6 @@ export default {
           duration: 2000
         })
       })
-      // }
-      // });
     }
   }
 }
