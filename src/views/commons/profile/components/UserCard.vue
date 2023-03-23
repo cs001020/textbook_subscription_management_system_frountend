@@ -1,9 +1,8 @@
 <template>
-  <el-card style="margin-bottom:20px;">
+  <el-card class="box-card">
     <div slot="header" class="clearfix">
-      <span>个人资料</span>
+      <span>个人信息</span>
     </div>
-
     <div class="user-profile">
       <div class="box-center">
         <pan-thumb :image="`https://kodo.warframe.top/${user.avatar}`" :height="'100px'" :width="'100px'" :hoverable="false">
@@ -13,55 +12,53 @@
       </div>
       <div class="box-center">
         <div class="user-name text-center">{{ user.name }}</div>
-        <div class="user-role text-center text-muted">{{ user.role | uppercaseFirst }}</div>
+        <div class="user-role text-center text-muted">角色：{{ user.role | uppercaseFirst }}</div>
       </div>
     </div>
-
-    <div class="user-bio">
-      <div class="user-education user-bio-section">
-        <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>Education</span></div>
-        <div class="user-bio-section-body">
-          <div class="text-muted">
-            班级
-          </div>
-        </div>
-        <el-divider />
-        <div class="user-bio-section-body">
-          <div class="text-muted">
-            JS in Computer Science from the University of Technology
-          </div>
-        </div>
+    <div>
+      <div class="text-center">
+        <userAvatar :user="user" />
       </div>
-
-      <div class="user-skills user-bio-section">
-        <div class="user-bio-section-header"><svg-icon icon-class="skill" /><span>Skills</span></div>
-        <div class="user-bio-section-body">
-          <div class="progress-item">
-            <span>Vue</span>
-            <el-progress :percentage="70" />
-          </div>
-          <div class="progress-item">
-            <span>JavaScript</span>
-            <el-progress :percentage="18" />
-          </div>
-          <div class="progress-item">
-            <span>Css</span>
-            <el-progress :percentage="12" />
-          </div>
-          <div class="progress-item">
-            <span>ESLint</span>
-            <el-progress :percentage="100" status="success" />
-          </div>
-        </div>
-      </div>
+      <ul class="list-group list-group-striped">
+        <li class="list-group-item">
+          学号/工号：
+          <div class="pull-right">{{ user.id }}</div>
+        </li>
+        <li class="list-group-item">
+          用户名称：
+          <div class="pull-right">{{ user.name }}</div>
+        </li>
+        <li class="list-group-item">
+          手机号码：
+          <div class="pull-right">{{ user.phoneNumber }}</div>
+        </li>
+        <li class="list-group-item">
+          所属单位：
+          <div v-if="user.dept" class="pull-right">{{ user.dept }}</div>
+        </li>
+        <li class="list-group-item">
+          创建时间：
+          <div class="pull-right">{{ user.creatTime | parseTime }}</div>
+        </li>
+        <li class="list-group-item">
+          用户名称：
+          <div class="pull-right">{{ user.roles }}</div>
+        </li>
+      </ul>
     </div>
   </el-card>
 </template>
 
 <script>
 import PanThumb from '@/components/PanThumb'
+// eslint-disable-next-line
+import user from '@/api/system/user'
+import { parseTime } from '@/utils'
 
 export default {
+  filters: {
+    parseTime
+  },
   components: { PanThumb },
   props: {
     user: {
@@ -69,8 +66,6 @@ export default {
       default: () => {
         return {
           name: '',
-          email: '',
-          avatar: '',
           role: ''
         }
       }
@@ -130,11 +125,15 @@ export default {
     padding: 15px 0;
 
     .user-bio-section-header {
-      border-bottom: 1px solid #dfe6ec;
+      // border-bottom: 1px solid #dfe6ec;
       padding-bottom: 10px;
       margin-bottom: 10px;
       font-weight: bold;
     }
+  }
+  .user-line {
+    display: block;
+    height: 10px;
   }
 }
 </style>
