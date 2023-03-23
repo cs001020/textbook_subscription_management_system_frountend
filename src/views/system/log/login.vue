@@ -1,12 +1,18 @@
 <template>
   <div class="app-container">
-    <el-form ref="queryForm" :model="queryParams" size="small" :inline="true" label-width="68px">
+    <el-form
+      ref="queryForm"
+      :model="queryParams"
+      size="small"
+      :inline="true"
+      label-width="68px"
+    >
       <el-form-item label="登录地址" prop="ip">
         <el-input
           v-model="queryParams.ip"
           placeholder="请输入登录地址"
           clearable
-          style="width: 240px;"
+          style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -15,7 +21,7 @@
           v-model="queryParams.name"
           placeholder="请输入用户名称"
           clearable
-          style="width: 240px;"
+          style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -42,8 +48,17 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+        >搜索</el-button>
+        <el-button
+          icon="el-icon-refresh"
+          size="mini"
+          @click="resetQuery"
+        >重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -61,18 +76,51 @@
 
     <el-table ref="tables" v-loading="loading" :data="list">
       <el-table-column label="访问编号" align="center" prop="id" />
-      <el-table-column label="用户名称" align="center" prop="account" :show-overflow-tooltip="true" />
-      <el-table-column label="登录地址" align="center" prop="ip" width="130" :show-overflow-tooltip="true" />
-      <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
-      <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
+      <el-table-column
+        label="用户名称"
+        align="center"
+        prop="account"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="登录地址"
+        align="center"
+        prop="ip"
+        width="130"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="登录地点"
+        align="center"
+        prop="loginLocation"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="浏览器"
+        align="center"
+        prop="browser"
+        :show-overflow-tooltip="true"
+      />
       <el-table-column label="操作系统" align="center" prop="os" />
       <el-table-column label="登录状态" align="center" prop="state">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.state |loginStateFilter">{{ scope.row.state }}</el-tag>
+          <el-tag :type="scope.row.state | loginStateFilter">{{
+            scope.row.state
+          }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作信息" align="center" prop="message" :show-overflow-tooltip="true" />
-      <el-table-column label="登录日期" align="center" prop="accessTime" width="180">
+      <el-table-column
+        label="操作信息"
+        align="center"
+        prop="message"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="登录日期"
+        align="center"
+        prop="accessTime"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.accessTime | parseTime }}</span>
         </template>
@@ -80,7 +128,7 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.page"
       :limit.sync="queryParams.size"
@@ -104,8 +152,8 @@ export default {
     parseTime,
     loginStateFilter(state) {
       const map = {
-        '登陆成功': undefined,
-        '登陆失败': 'danger'
+        登陆成功: undefined,
+        登陆失败: 'danger'
       }
       return map[state]
     }
@@ -139,12 +187,11 @@ export default {
     /** 查询登录日志列表 */
     getList() {
       this.loading = true
-      api.loginList(this.queryParams).then(response => {
+      api.loginList(this.queryParams).then((response) => {
         this.list = response.data
         this.total = response.total
         this.loading = false
-      }
-      )
+      })
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -187,7 +234,7 @@ export default {
         headers,
         responseType: 'arraybuffer',
         data: this.queryParams
-      }).then(res => {
+      }).then((res) => {
         const blob = new Blob([res.data])
         saveAs(blob, `LoginLog_${new Date().getTime()}.xlsx`)
       })
