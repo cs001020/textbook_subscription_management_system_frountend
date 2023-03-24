@@ -126,6 +126,20 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/academic/add-plan',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:role:edit'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/academic/openingPlan/add.vue'),
+        name: 'AddPlan',
+        meta: { title: '添加开课计划', activeMenu: '/academic/openingPlan' }
+      }
+    ]
+  },
+  {
     path: '/test',
     component: Layout,
     children: [

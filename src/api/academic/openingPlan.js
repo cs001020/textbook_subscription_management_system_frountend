@@ -26,6 +26,13 @@ export default {
       method: 'post',
       data
     })
+  },
+  courseSearch(params) {
+    return request({
+      url: '/plan/course',
+      method: 'get',
+      params
+    })
   }
 }
 

@@ -8,7 +8,7 @@
         icon="el-icon-edit"
         @click="handleCreate"
       >
-        {{ $t('table.add') }}
+        添加开课计划
       </el-button>
     </div>
     <el-table
@@ -91,24 +91,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      title="导入开课计划"
-      :visible.sync="dialogVisible"
-      width="70%"
-      :before-close="handleClose"
-    >
-      <add @complete="complete" />
-    </el-dialog>
     <h1>//TODO 删除 编辑</h1>
   </div>
 </template>
 
 <script>
 import openingPlan from '@/api/academic/openingPlan'
-import Add from '@/views/commons/components/add.vue'
 
 export default {
-  components: { Add },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -128,34 +118,8 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          'createTime': 1676931481000,
-          'id': 1,
-          'openingPlanDetails': [
-            {
-              'courseName': 'JAVA',
-              'credit': 2,
-              'id': 1,
-              'teachingHours': 40,
-              'type': '考试',
-              'weeksTeach': 20
-            }
-          ],
-          'state': '已经选定教材，等待审批',
-          'canAddApproval': true,
-          'grade': '计算机科学与技术2021级1班',
-          'secondaryCollege': '人工智能学院',
-          'teacher': {
-            'avatar': '/icons/default-icon.png',
-            'id': 2,
-            'name': '测试账号'
-          },
-          'teachingGroup': '高级语言——程序设计与实现技术教学团队'
-        }
-      ],
-      loading: true,
-      dialogVisible: false
+      tableData: [],
+      loading: true
     }
   },
   created() {
@@ -169,18 +133,7 @@ export default {
       })
     },
     handleCreate() {
-      this.dialogVisible = true
-    },
-    handleClose(done) {
-      this.$confirm('当前数据将不会保存,确认关闭？')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
-    },
-    complete() {
-      this.dialogVisible = false
-      this.getList()
+      this.$router.push({ path: '/academic/add-plan/add' })
     }
   }
 }

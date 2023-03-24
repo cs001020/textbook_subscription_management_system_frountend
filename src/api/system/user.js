@@ -22,10 +22,11 @@ export function logout() {
   })
 }
 
-export function teacher() {
+export function teacher(params) {
   return request({
     url: '/user/teacher',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
