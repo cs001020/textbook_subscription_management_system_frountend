@@ -87,6 +87,7 @@
       </el-table-column>
     </el-table>
     <Select v-else :id="selectId" class="transition-box" @cancel="select = false" @submit="submit" />
+    <h1>//todo 上传路径</h1>
   </div>
 </template>
 

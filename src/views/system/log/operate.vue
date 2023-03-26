@@ -32,6 +32,7 @@
           <el-option label="修改" value="UPDATE" />
           <el-option label="删除" value="DELETE" />
           <el-option label="导出" value="EXPORT" />
+          <el-option label="上传" value="UPLOAD" />
           <el-option label="授权" value="GRANT" />
         </el-select>
       </el-form-item>
@@ -213,6 +214,7 @@ export default {
         '删除': 'danger',
         '修改': 'info',
         '导出': 'warning',
+        '上传': 'warning',
         '授权': undefined
       }
     }

@@ -70,7 +70,7 @@
             <el-upload
               class="upload-demo"
               :headers="requestHand"
-              action="http://localhost:8080/file/upload"
+              action="http://localhost:8080/file/upload/img"
               accept="image/*"
               :on-success="handleUploadSuccess"
               :multiple="false"
