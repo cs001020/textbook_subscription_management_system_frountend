@@ -1,7 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
     <div class="filter-container" style="margin: 0 10px 0 20px">
-      <i v-if="mode==='select'" class="el-icon-back" @click="$emit('back')" />
       <el-input v-model="search.keyWord" placeholder="关键字" style="width: 200px;margin-right: 10px" class="filter-item" @keyup.enter.native="getList" />
       <el-select v-model="search.orderByPrice" placeholder="价格" style="width: 90px;margin-right: 10px" class="filter-item">
         <el-option
@@ -86,7 +85,7 @@
           </el-badge>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="mode==='select'" size="small" @click="$emit('add',dialogFormData)">添加教材</el-button>
+          <el-button size="small" @click="add(dialogFormData.id)">添加库存</el-button>
         </el-form-item>
         <el-form-item label="太多了">
           <el-link type="danger" disabled>字段太多 自己看着来吧</el-link>
@@ -102,8 +101,6 @@ import Feedback from '@/views/commons/components/feedback.vue'
 import feedback from '@/api/feedback'
 export default {
   components: { Feedback },
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['mode'],
   data() {
     return {
       textBookList: [
@@ -207,6 +204,15 @@ export default {
       feedback.get(id).then(res => {
         this.feedbackList = res.data
         this.feedbackVisible = true
+      })
+    },
+    add(id) {
+      this.$prompt('请输入数量', '提示').then(({ value }) => {
+        textbook.addStock(id, { count: value }).then(res => {
+          this.dialogTableVisible = false
+          this.$message({ message: '添加成功', type: 'success' })
+          this.getList()
+        })
       })
     }
   }

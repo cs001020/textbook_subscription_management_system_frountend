@@ -142,12 +142,13 @@ export const constantRoutes = [
   {
     path: '/test',
     component: Layout,
+    permissions: ['system:role:edit'],
     children: [
       {
-        path: 'tet1',
-        component: () => import('@/views/student/test.vue'),
-        name: 'AuthUser',
-        meta: { title: '测试' }
+        path: 'test',
+        component: () => import('@/views/test.vue'),
+        name: 'test',
+        meta: { title: '测试', icon: '404' }
       }
     ]
   }

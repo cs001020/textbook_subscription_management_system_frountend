@@ -20,6 +20,13 @@ export default {
       url: '/textbook/me',
       method: 'get'
     })
+  },
+  addStock(id, params) {
+    return request({
+      url: `/textbook/addStock/${id}`,
+      method: 'put',
+      params
+    })
   }
 }
 
