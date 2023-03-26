@@ -1,64 +1,104 @@
 <template>
-  <div v-loading="loading" class="app-container">
-    <div class="filter-container" style="margin: 0 10px 0 20px">
-      <el-input v-model="search.keyWord" placeholder="关键字" style="width: 200px;margin-right: 10px" class="filter-item" @keyup.enter.native="getList" />
-      <el-select v-model="search.orderByPrice" placeholder="价格" style="width: 90px;margin-right: 10px" class="filter-item">
-        <el-option
-          v-for="item in order"
-          :key="item.id"
-          :label="item.name"
-          :value="item.value"
+  <div class="app-container">
+    <!--搜索栏-->
+    <el-form ref="queryForm" :model="search" size="small" :inline="true" label-width="68px">
+      <el-form-item label="关键字" prop="userName">
+        <el-input
+          v-model="search.keyWord"
+          placeholder="请输入关键字"
+          clearable
+          style="width: 240px"
+          @keyup.enter.native="handleQuery"
         />
-      </el-select>
-      <el-select v-model="search.orderByStock" placeholder="库存" style="width: 90px;margin-right: 10px" class="filter-item">
-        <el-option
-          v-for="item in order"
-          :key="item.id"
-          :label="item.name"
-          :value="item.value"
-        />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
-        {{ $t('table.search') }}
-      </el-button>
-      <el-button class="filter-item" icon="el-icon-refresh" @click="handleReset">
-        重置
-      </el-button>
-    </div>
-
-    <el-row>
-      <el-col v-for="item in textBookList" :key="item.id" :span="4">
-        <el-card :body-style="{ padding: '0px' }" style="height: 320px;margin: 0 10px 20px 20px">
-          <el-image
-            v-if="item.imgUrl"
-            style="width: 243px; height: 230px"
-            fit="fill"
-            :src="`https://kodo.warframe.top${item.imgUrl}`"
-          />
-          <div style="padding: 14px;height: 94px">
-            <span>{{ item.bookName }}</span>
-            <div class="bottom clearfix">
-              <time class="time">{{ item.publishingHouse }} </time>
-              <el-button type="text" class="button" @click="showDetail(item)">详细信息</el-button>
-            </div>
-          </div>
-        </el-card>
+      </el-form-item>
+      <el-form-item label="状态" prop="type">
+        <el-select
+          v-model="search.state"
+          placeholder="教材状态"
+          clearable
+          style="width: 240px"
+        >
+          <el-option label="123" value="12" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="handleResetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <!--操作按钮-->
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+        >新增</el-button>
       </el-col>
     </el-row>
-
-    <el-pagination
-      :page-size="search.size"
-      :current-page="search.page"
-      background
-      layout="total,prev, pager, next"
+    <!--表格-->
+    <el-table ref="dataTable" v-loading="loading" :data="textBookList" @sort-change="handleSort">
+      <el-table-column label="教材编号" prop="id" width="120" />
+      <el-table-column label="教材名" prop="bookName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="作者" prop="author" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="出版社" prop="publishingHouse" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="价格" sortable="custom" prop="price" :show-overflow-tooltip="true" width="100" />
+      <el-table-column label="库存" sortable="custom" prop="stock" :show-overflow-tooltip="true" width="100" />
+      <el-table-column label="状态" align="center" width="100">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.state | textbookStateFilter">{{ scope.row.state }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="出版日期" align="center" width="150">
+        <template slot-scope="scope">
+          {{ parseTime(scope.row.publicationDate,'{y}-{m}-{d}') }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="$refs.textbookDetail.show(scope.row)"
+          >详情</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+          >弃用</el-button>
+          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+            <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                command="handleResetPwd"
+                icon="el-icon-key"
+              >添加库存</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-key" class="clearfix" :disabled="scope.row.feedbackCount===0">
+                查看反馈
+                <el-badge class="mark" :value="scope.row.feedbackCount" />
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--分页-->
+    <pagination
+      v-show="total>0"
       :total="total"
-      @current-change="handleCurrentChange"
+      :page.sync="search.page"
+      :limit.sync="search.size"
+      @pagination="getList"
     />
 
     <!--详细信息-->
     <el-dialog title="详细信息" :visible.sync="dialogTableVisible">
       <!--评论-->
-      <el-dialog
+      <!--      <el-dialog
         width="30%"
         title="学生反馈"
         append-to-body
@@ -90,81 +130,52 @@
         <el-form-item label="太多了">
           <el-link type="danger" disabled>字段太多 自己看着来吧</el-link>
         </el-form-item>
-      </el-form>
+      </el-form>-->
     </el-dialog>
+    <!--详细信息-->
+    <TextbookDetail ref="textbookDetail" />
   </div>
 </template>
 
 <script>
 import textbook from '@/api/textbookSubscription/textbook'
-import Feedback from '@/views/commons/components/feedback.vue'
 import feedback from '@/api/feedback'
+import { parseTime } from '@/utils'
+import Feedback from '@/views/commons/components/feedback.vue'
+import TextbookDetail from '@/views/commons/components/TextbookDetail'
+import Pagination from '@/views/commons/components/Pagination/index.vue'
+
+const textbookState = {
+  '正常': undefined,
+  '库存不足': 'warning',
+  '审核中': 'info',
+  '弃用': 'danger'
+}
+const orderMap = {
+  descending: 'DESC',
+  ascending: 'ASC'
+}
 export default {
-  components: { Feedback },
+  // eslint-disable-next-line vue/no-unused-components
+  components: { Pagination, Feedback, TextbookDetail },
+  filters: {
+    textbookStateFilter(state) {
+      return textbookState[state]
+    }
+  },
   data() {
     return {
-      textBookList: [
-        {
-          'author': '',
-          'binding': '',
-          'bookName': '',
-          'description': '',
-          'folio': '',
-          'id': 0,
-          'imgUrl': '',
-          'isbn': '',
-          'pageNumber': {},
-          'price': '',
-          'print': '',
-          'publicationDate': '',
-          'publishingHouse': '',
-          'state': '',
-          'stock': 0,
-          'words': ''
-        }
-      ],
+      textBookList: [],
       total: 0,
       search: {
-        keyWord: '',
-        orderByPrice: 'NONE',
-        orderByStock: 'NONE',
+        keyWord: undefined,
+        orderByPrice: undefined,
+        orderByStock: undefined,
         page: 1,
-        size: 12
+        size: 10
       },
-      order: [{
-        id: 1,
-        name: '不排序',
-        value: 'NONE'
-      },
-      {
-        id: 2,
-        name: '升序',
-        value: 'ASC'
-      },
-      {
-        id: 3,
-        name: '降序',
-        value: 'DESC'
-      }],
       dialogTableVisible: false,
-      dialogFormData: {
-        'author': '',
-        'binding': '',
-        'bookName': '',
-        'description': '',
-        'folio': '',
-        'id': 0,
-        'imgUrl': '',
-        'isbn': '',
-        'pageNumber': {},
-        'price': '',
-        'print': '',
-        'publicationDate': '',
-        'publishingHouse': '',
-        'state': '',
-        'stock': 0,
-        'words': ''
-      },
+      dialogFormData: undefined,
       loading: false,
       feedbackVisible: false,
       feedbackList: []
@@ -174,6 +185,7 @@ export default {
     this.getList()
   },
   methods: {
+    /* 获取数据 */
     getList() {
       this.loading = true
       textbook.list(this.search).then(res => {
@@ -182,23 +194,36 @@ export default {
         this.loading = false
       })
     },
-    handleCurrentChange(val) {
-      this.search.page = val
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.search.page = 1
       this.getList()
     },
-    handleReset() {
+    /** 重置按钮 */
+    handleResetQuery() {
+      this.reset()
+      this.getList()
+    },
+    /* 重置搜索参数 */
+    reset() {
       this.search = {
-        keyWord: '',
-        orderByPrice: 'NONE',
-        orderByStock: 'NONE',
+        keyWord: undefined,
+        orderByPrice: undefined,
+        orderByStock: undefined,
         page: 1,
-        size: 12
+        size: 10
+      }
+      this.$refs.dataTable.clearSort()
+    },
+    /* 表格排序 */
+    handleSort({ prop, order }) {
+      if (prop === 'price') {
+        this.search.orderByPrice = orderMap[order]
+      }
+      if (prop === 'stock') {
+        this.search.orderByStock = orderMap[order]
       }
       this.getList()
-    },
-    showDetail(value) {
-      this.dialogFormData = value
-      this.dialogTableVisible = true
     },
     showFeedback(id) {
       feedback.get(id).then(res => {
@@ -214,7 +239,8 @@ export default {
           this.getList()
         })
       })
-    }
+    },
+    parseTime
   }
 }
 </script>
