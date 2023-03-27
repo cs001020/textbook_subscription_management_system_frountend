@@ -98,7 +98,7 @@
 
 <script>
 import textbook from '@/api/textbookSubscription/textbook'
-import Feedback from '@/views/commons/components/feedback.vue'
+import Feedback from '@/views/commons/components/TextbookFeedback/index.vue'
 import feedback from '@/api/feedback'
 export default {
   components: { Feedback },

@@ -103,7 +103,7 @@
 
 <script>
 import { getToken, getRequestHand } from '@/utils/auth'
-import Feedback from '@/views/commons/components/feedback.vue'
+import Feedback from '@/views/commons/components/TextbookFeedback/index.vue'
 import Index from '@/views/commons/components/textbookList.vue'
 import feedback from '@/api/feedback'
 

@@ -152,8 +152,8 @@ export default {
     parseTime,
     loginStateFilter(state) {
       const map = {
-        登陆成功: undefined,
-        登陆失败: 'danger'
+        '登陆成功': undefined,
+        '登陆失败': 'danger'
       }
       return map[state]
     }

@@ -195,7 +195,7 @@ import { parseTime } from '@/utils'
 import openingPlan from '@/api/academic/openingPlan'
 import textbook from '@/api/textbookSubscription/textbook'
 import feedback from '@/api/feedback'
-import Feedback from '@/views/commons/components/feedback.vue'
+import Feedback from '@/views/commons/components/TextbookFeedback/index.vue'
 
 export default {
   components: { Feedback },

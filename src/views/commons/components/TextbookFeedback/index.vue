@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <el-card v-if="feedback.length>0" class="box-card-main-div">
+  <el-dialog title="教材反馈" :visible.sync="open">
+    <el-card v-if="feedbackData.length>0" class="box-card-main-div">
       <div class="box-card cue-words-content-card">
         <div
-          v-for="message in feedback"
+          v-for="message in feedbackData"
           :key="message.id"
           class="cue-words-content-div-for"
         >
@@ -27,7 +27,7 @@
               <el-image
                 style="width: 50px; height: 50px"
                 :src="`https://kodo.warframe.top/${message.images}`"
-                :preview-src-list="getImg(message)"
+                :preview-src-list="[`https://kodo.warframe.top/${message.images}`]"
               />
             </div>
           </div>
@@ -37,40 +37,28 @@
     <el-card v-else class="box-card-main-div">
       <span>无内容</span>
     </el-card>
-  </div>
+  </el-dialog>
 </template>
 
 <script>
 import { parseTime } from '@/utils'
+import feedback from '@/api/feedback'
 export default {
   filters: {
     parseTime
   },
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['feedback'],
   data() {
     return {
-      'data': [
-        {
-          'createTime': 1676951523000,
-          'id': 1,
-          'images': '/upload/3d427444fb5d4352849ef45b7276d1c5-test.jpeg',
-          'message': '这书很好！！！',
-          'simpleUserInfoVO': {
-            'avatar': '/icons/user5-icon.png',
-            'name': '学生10'
-          }
-        }
-      ]
+      open: false,
+      feedbackData: []
     }
   },
   methods: {
-    getImg(row) {
-      const url = `https://kodo.warframe.top/${row.images}`
-      return [
-        url,
-        url
-      ]
+    show(textbookId) {
+      feedback.getByTextbookId(textbookId).then(res => {
+        this.feedbackData = res.data
+        this.open = true
+      })
     }
   }
 }

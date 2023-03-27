@@ -21,11 +21,37 @@ export default {
       method: 'get'
     })
   },
+  addTextbook(data) {
+    return request({
+      url: `/textbook/addTextBook`,
+      method: 'post',
+      data
+    })
+  },
   addStock(id, params) {
     return request({
       url: `/textbook/addStock/${id}`,
       method: 'put',
       params
+    })
+  },
+  getById(id) {
+    return request({
+      url: `/textbook/${id}`,
+      method: 'get'
+    })
+  },
+  updateTextbook(data) {
+    return request({
+      url: `/textbook/update`,
+      method: 'put',
+      data
+    })
+  },
+  discardTextbook(id) {
+    return request({
+      url: `/textbook/discard/${id}`,
+      method: 'put'
     })
   }
 }
