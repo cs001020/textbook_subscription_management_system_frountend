@@ -133,7 +133,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'add',
-        component: () => import('@/views/academic/openingPlan/add.vue'),
+        component: () => import('@/views/academic/openingPlan/importOpeningPlan.vue'),
         name: 'AddPlan',
         meta: { title: '添加开课计划', activeMenu: '/academic/openingPlan' }
       }

@@ -133,12 +133,13 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.course = selection
+      this.course = selection.map(item => item)
     },
     /** 选定课程按钮 */
     handleSelectCourse() {
-      this.visible = false
       this.$emit('ok', this.course)
+      this.$refs.table.clearSelection()
+      this.visible = false
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="开课计划详情" :visible.sync="open" width="800px" top="5vh" append-to-body>
-    <table cellspacing="10">
+    <table v-if="open" cellspacing="10">
       <tr>
         <td class="title">教师：</td>
         <td colspan="3">
@@ -9,27 +9,27 @@
             size="medium"
             :src="`https://kodo.warframe.top${openPlan.teacher.avatar}`"
           />
-          {{ openPlan.teacher.name }}
+          <span>{{ openPlan.teacher.name }}</span>
         </td>
       </tr>
       <tr>
         <td class="title">教学组：</td>
-        <td>{{ openPlan.teachingGroup }}</td>
+        <td>{{ openPlan.teachingGroup.name }}</td>
         <td class="title">二级学院：</td>
-        <td>{{ openPlan.secondaryCollege }}</td>
+        <td>{{ openPlan.secondaryCollege.name }}</td>
       </tr>
       <tr>
         <td class="title">班级：</td>
-        <td>{{ openPlan.grade }}</td>
+        <td>{{ `${openPlan.grade.year}级${openPlan.grade.number}班` }}</td>
         <td class="title">当前状态：</td>
         <td>
           <el-tag :type="openPlan.state | stateFilter">
-            {{ openPlan.state }}
+            {{ openPlan.state |statusLabelFilter }}
           </el-tag>
         </td>
       </tr>
     </table>
-    <table cellspacing="10">
+    <table v-if="open" cellspacing="10">
       <tr>
         <td class="title" colspan="4">课程：</td>
       </tr>
@@ -39,22 +39,22 @@
         >
           <el-table-column
             prop="courseName"
-            label="日期"
+            label="课程名"
             width="150"
           />
           <el-table-column
             prop="credit"
-            label="姓名"
+            label="学分"
             width="150"
           />
           <el-table-column
             prop="teachingHours"
-            label="姓名"
+            label="总学时"
             width="150"
           />
           <el-table-column
             prop="weeksTeach"
-            label="姓名"
+            label="教学周"
             width="150"
           />
           <el-table-column
@@ -62,7 +62,7 @@
             label="类型"
           >
             <template slot-scope="scope">
-              <el-tag :type="scope.row.type|typeFilter">{{ scope.row.type }}</el-tag>
+              <el-tag :type="scope.row.type|typeFilter">{{ scope.row.type |typeLabelFilter }}</el-tag>
             </template>
           </el-table-column>
         </el-table>
@@ -75,26 +75,47 @@
 import { parseTime } from '@/utils'
 
 const typeMap = {
-  '考察': 'success',
-  '考试': 'danger'
+  EXAMINATION: {
+    label: '考试',
+    type: 'danger'
+  },
+  INVESTIGATE: {
+    label: '考察',
+    type: null
+  }
 }
-const stateMap = {
-  '审批完成': 'success',
-  '已经选定教材，等待审批': 'warning',
-  '等待教师选定教材': null
+const statusMap = {
+  TEXTBOOKS_TO_BE_SELECT: {
+    label: '等待选定教材',
+    type: null
+  },
+  WAITING_FOR_APPROVAL: {
+    label: '已经选择教材,审核中',
+    type: 'warning'
+  },
+  APPROVAL_COMPLETED: {
+    label: '审核通过',
+    type: 'success'
+  }
 }
 export default {
   filters: {
     typeFilter(type) {
-      return typeMap[type]
+      return typeMap[type].type
+    },
+    typeLabelFilter(type) {
+      return typeMap[type].label
     },
     stateFilter(state) {
-      return stateMap[state]
+      return statusMap[state].type
+    },
+    statusLabelFilter(status) {
+      return statusMap[status].label
     }
   },
   data() {
     return {
-      openPlan: {},
+      openPlan: undefined,
       open: false
     }
   },
@@ -102,7 +123,7 @@ export default {
     parseTime,
     show(data) {
       this.openPlan = data
-      this.openPlan = true
+      this.open = true
     }
   }
 }

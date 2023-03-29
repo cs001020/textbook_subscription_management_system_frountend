@@ -87,7 +87,7 @@ const textbookState = {
 }
 import { parseTime } from '@/utils'
 export default {
-  name: 'Test',
+  name: 'TextbookDetail',
   filters: {
     textbookStateFilter(state) {
       return textbookState[state]

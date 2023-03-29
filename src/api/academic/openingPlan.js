@@ -33,6 +33,31 @@ export default {
       method: 'get',
       params
     })
+  },
+  getGrade() {
+    return request({
+      url: '/plan/garde',
+      method: 'get'
+    })
+  },
+  getTeachingGroup() {
+    return request({
+      url: '/plan/teachingGroup',
+      method: 'get'
+    })
+  },
+  deleteById(id) {
+    return request({
+      url: `/plan/${id}`,
+      method: 'delete'
+    })
+  },
+  updateOpeningPlan(id, data) {
+    return request({
+      url: `/plan/${id}`,
+      method: 'put',
+      data
+    })
   }
 }
 

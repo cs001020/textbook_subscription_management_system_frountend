@@ -25,31 +25,7 @@
           <el-form-item label="教学组" :label-width="formLabelWidth">
             <el-select v-model="form.teachingGroupId" placeholder="请选择">
               <el-option
-                v-for="item in teachingGroup"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8" :offset="2">
-          <el-form-item label="二级学院" :label-width="formLabelWidth">
-            <el-select v-model="form.secondaryCollegeId" placeholder="请选择">
-              <el-option
-                v-for="item in secondaryCollege"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8" :offset="2">
-          <el-form-item label="专业" :label-width="formLabelWidth">
-            <el-select v-model="form.majorId" :disabled="majorDisable" placeholder="请选择">
-              <el-option
-                v-for="item in major"
+                v-for="item in teachingGroupList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -59,14 +35,12 @@
         </el-col>
         <el-col :span="8" :offset="2">
           <el-form-item label="班级" :label-width="formLabelWidth">
-            <el-select v-model="form.gradeId" :disabled="gradeDisable" placeholder="请选择">
-              <el-option
-                v-for="item in grade"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
+            <el-cascader v-model="selectedGrade" :options="gradeList" :props="{label:'name',value:'id'}" @change="handleChange">
+              <template slot-scope="{ node, data }">
+                <span>{{ data.name }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -162,17 +136,13 @@
       </div>
     </el-dialog>
     <!--选择教师dialog-->
-    <select-teacher ref="select" :teacher-group-list="teachingGroup" :secondary-college-list="secondaryCollege" @ok="ok" />
+    <select-teacher ref="select" :teacher-group-list="teachingGroupList" :secondary-college-list="getSecondCollege()" @ok="ok" />
     <!--选择课程dialog-->
     <select-course ref="selectCourse" @ok="courseOk" />
   </div>
 </template>
 
 <script>
-import teachingGroup from '@/api/academic/teachingGroup'
-import secondaryCollege from '@/api/academic/secondaryCollege'
-import major from '@/api/academic/major'
-import grade from '@/api/academic/grade'
 import openingPlan from '@/api/academic/openingPlan'
 import SelectTeacher from '@/views/academic/openingPlan/selectTeacher.vue'
 import SelectCourse from '@/views/academic/openingPlan/selectCourse.vue'
@@ -198,44 +168,20 @@ export default {
   data() {
     return {
       teacher: undefined,
-      teachingGroup: [
-        {
-          'id': '1',
-          'name': '机械制造系列课程教学团队'
-        },
-        {
-          'id': '2',
-          'name': '电气类专业主要技术基础课程教学团队'
-        }
-      ],
-      secondaryCollege: [
-        {
-          'id': '1',
-          'name': '人工智能学院'
-        },
-        {
-          'id': '2',
-          'name': '外国语与海外教育学院'
-        }],
-      major: [],
-      grade: [],
+      teachingGroupList: [],
+      gradeList: [],
+      selectedGrade: [],
       form: {
         teacherId: undefined,
-        teachingGroupId: '',
-        secondaryCollegeId: '',
-        majorId: '',
-        gradeId: '',
+        teachingGroupId: undefined,
+        secondaryCollegeId: undefined,
+        majorId: undefined,
+        gradeId: undefined,
         openingPlanDetailDTOList: []
       },
       title: undefined,
       dialogFormVisible: false,
-      openingPlanDetailDTO: {
-        'courseName': '123',
-        'credit': 1,
-        'teachingHours': 2,
-        'type': 'EXAMINATION',
-        'weeksTeach': 3
-      },
+      openingPlanDetailDTO: {},
       // 当前修改的课程的index
       editId: undefined,
       rules: {
@@ -262,54 +208,39 @@ export default {
         '考察': 'success',
         '考试': 'danger'
       },
-      formLabelWidth: '120px'
-    }
-  },
-  computed: {
-    majorDisable() {
-      return this.major.length <= 0
-    },
-    gradeDisable() {
-      return this.grade.length <= 0
-    }
-  },
-  watch: {
-    form: {
-      handler(newVal) {
-        if (newVal.secondaryCollegeId) {
-          this.getMajorList()
-        }
-        if (newVal.majorId) {
-          this.getGradeList()
-        }
-      },
-      deep: true
+      formLabelWidth: '150px'
     }
   },
   created() {
     this.getTeachingGroupList()
-    this.getSecondaryCollegeList()
+    this.getGradeList()
   },
   methods: {
+    /* 获取教学组列表 */
     getTeachingGroupList() {
-      teachingGroup.list().then(res => {
-        this.teachingGroup = res.data
+      openingPlan.getTeachingGroup().then(res => {
+        this.teachingGroupList = res.data
       })
     },
-    getSecondaryCollegeList() {
-      secondaryCollege.list().then(res => {
-        this.secondaryCollege = res.data
-      })
-    },
-    getMajorList() {
-      major.list(this.form.secondaryCollegeId).then(res => {
-        this.major = res.data
-      })
-    },
+    /* 获取班级列表 */
     getGradeList() {
-      grade.list(this.form.majorId).then(res => {
-        this.grade = res.data
+      openingPlan.getGrade().then(res => {
+        this.gradeList = res.data
       })
+    },
+    /* 遍历班级列表 获取 二级学院列表 */
+    getSecondCollege() {
+      const res = []
+      this.gradeList.forEach(grade => {
+        res.push({ id: grade.id, name: grade.name })
+      })
+      return res
+    },
+    /* 级联选择器选中班级 */
+    handleChange() {
+      this.form.secondaryCollegeId = this.selectedGrade[0]
+      this.form.majorId = this.selectedGrade[1]
+      this.form.gradeId = this.selectedGrade[2]
     },
     /* 创建课程 */
     handleCreate() {
