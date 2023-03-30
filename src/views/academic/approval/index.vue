@@ -79,6 +79,7 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="text" size="mini" icon="el-icon-view" @click="$refs.detail.show(row.id)">详情</el-button>
+          <el-button type="text" size="mini" icon="el-icon-reading" @click="$refs.textbook.show(row.id)">教材</el-button>
           <el-button v-if="row.state !=='ADOPT'" type="text" size="mini" icon="el-icon-delete" @click="handelDel(row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -93,6 +94,7 @@
     />
     <!--详情-->
     <approval-detail ref="detail" />
+    <textbook-detail-list ref="textbook" />
   </div>
 </template>
 
@@ -100,6 +102,7 @@
 import approval from '@/api/textbookSubscription/approval'
 import { parseTime } from '@/utils'
 import ApprovalDetail from '@/views/commons/components/ApprovalDetail'
+import TextbookDetailList from '@/views/commons/components/TextbookDetailList'
 import Pagination from '@/views/commons/components/Pagination/index.vue'
 const stateMap = {
   WAIT_GROUP: {
@@ -124,7 +127,7 @@ const stateMap = {
   }
 }
 export default {
-  components: { Pagination, ApprovalDetail },
+  components: { TextbookDetailList, Pagination, ApprovalDetail },
   filters: {
     stateLabelMap(state) {
       return stateMap[state].label
@@ -189,6 +192,7 @@ export default {
       }
       this.dateRange = []
     },
+    /* 删除按钮 */
     handelDel(id) {
       this.$confirm('此操作将永久删除该数据, 是否继续?', '系统提示', {
         confirmButtonText: '确定',

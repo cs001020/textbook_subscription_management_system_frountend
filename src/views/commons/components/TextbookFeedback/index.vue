@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="教材反馈" :visible.sync="open">
+  <el-dialog title="教材反馈" :visible.sync="open" :append-to-body="append">
     <el-card v-if="feedbackData.length>0" class="box-card-main-div">
       <div class="box-card cue-words-content-card">
         <div
@@ -46,6 +46,12 @@ import feedback from '@/api/feedback'
 export default {
   filters: {
     parseTime
+  },
+  props: {
+    append: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

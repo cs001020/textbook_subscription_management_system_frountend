@@ -71,6 +71,12 @@ export default {
       url: `/approval/admin/${id}`,
       method: 'delete'
     })
+  },
+  getTextbook(id) {
+    return request({
+      url: `/approval/textbook/${id}`,
+      method: 'get'
+    })
   }
 }
 
