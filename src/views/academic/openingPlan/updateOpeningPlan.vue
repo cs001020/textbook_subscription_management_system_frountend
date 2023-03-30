@@ -61,22 +61,28 @@
       <el-table-column
         prop="courseName"
         label="课程名"
+        width="120px"
+        :show-overflow-tooltip="true"
       />
       <el-table-column
         prop="credit"
         label="学分"
+        width="120px"
       />
       <el-table-column
         prop="teachingHours"
         label="总学时"
+        width="120px"
       />
       <el-table-column
         prop="weeksTeach"
         label="教学周"
+        width="120px"
       />
       <el-table-column
         prop="type"
         label="类型"
+        width="120px"
       >
         <template slot-scope="{row}">
           <el-tag :type="row.type | typeFilter">
