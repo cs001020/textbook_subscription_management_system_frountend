@@ -1,115 +1,15 @@
 <template>
-  <el-dialog title="开课计划详情" :visible.sync="open" width="800px" top="5vh" append-to-body>
-    <table cellspacing="10">
-      <tr>
-        <td class="title">教师：</td>
-        <td colspan="3">
-          <el-avatar
-            shape="square"
-            size="medium"
-            :src="`https://kodo.warframe.top${openPlan.teacher.avatar}`"
-          />
-          {{ openPlan.teacher.name }}
-        </td>
-      </tr>
-      <tr>
-        <td class="title">教学组：</td>
-        <td>{{ openPlan.teachingGroup }}</td>
-        <td class="title">二级学院：</td>
-        <td>{{ openPlan.secondaryCollege }}</td>
-      </tr>
-      <tr>
-        <td class="title">班级：</td>
-        <td>{{ openPlan.grade }}</td>
-        <td class="title">当前状态：</td>
-        <td>
-          <el-tag :type="openPlan.state | stateFilter">
-            {{ openPlan.state }}
-          </el-tag>
-        </td>
-      </tr>
-    </table>
-    <table cellspacing="10">
-      <tr>
-        <td class="title" colspan="4">课程：</td>
-      </tr>
-      <tr>
-        <el-table
-          :data="openPlan.openingPlanDetails"
-        >
-          <el-table-column
-            prop="courseName"
-            label="日期"
-            width="150"
-          />
-          <el-table-column
-            prop="credit"
-            label="姓名"
-            width="150"
-          />
-          <el-table-column
-            prop="teachingHours"
-            label="姓名"
-            width="150"
-          />
-          <el-table-column
-            prop="weeksTeach"
-            label="姓名"
-            width="150"
-          />
-          <el-table-column
-            prop="type"
-            label="类型"
-          >
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.type|typeFilter">{{ scope.row.type }}</el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
-      </tr>
-    </table>
-  </el-dialog>
+  <div>
+    <h1>hello</h1>
+  </div>
 </template>
 
 <script>
-import { parseTime } from '@/utils'
-
-const typeMap = {
-  '考察': 'success',
-  '考试': 'danger'
-}
-const stateMap = {
-  '审批完成': 'success',
-  '已经选定教材，等待审批': 'warning',
-  '等待教师选定教材': null
-}
 export default {
-  filters: {
-    typeFilter(type) {
-      return typeMap[type]
-    },
-    stateFilter(state) {
-      return stateMap[state]
-    }
-  },
-  data() {
-    return {
-      openPlan: {},
-      open: false
-    }
-  },
-  methods: {
-    parseTime,
-    show(data) {
-      this.openPlan = data
-      this.openPlan = true
-    }
-  }
+
 }
 </script>
 
-<style scoped>
-.title {
-  font-weight: bold;
-}
+<style lang="scss" scoped>
+
 </style>

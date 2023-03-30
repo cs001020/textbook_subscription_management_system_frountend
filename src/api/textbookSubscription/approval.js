@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
 export default {
-  all() {
+  list(params) {
     return request({
-      url: '/approval/allApproval',
-      method: 'get'
+      url: '/approval/list',
+      method: 'get',
+      params
     })
   },
   me() {
@@ -57,6 +58,18 @@ export default {
       url: '/approval/submit',
       method: 'post',
       data
+    })
+  },
+  getDetails(id) {
+    return request({
+      url: `/approval/details/${id}`,
+      method: 'get'
+    })
+  },
+  adminDel(id) {
+    return request({
+      url: `/approval/admin/${id}`,
+      method: 'delete'
     })
   }
 }
