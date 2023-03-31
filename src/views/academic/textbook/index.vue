@@ -258,6 +258,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       textBookList: [],
       total: 0,
       search: {

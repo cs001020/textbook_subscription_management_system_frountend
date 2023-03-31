@@ -140,6 +140,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/textbookSubscription/textbook-select',
+    component: Layout,
+    children: [
+      {
+        path: ':openingPlanId(\\d+)',
+        component: () => import('@/views/textbookSubscription/openingPlan/select.vue'),
+        name: 'TextbookSelect',
+        meta: { title: '选择教材', activeMenu: '/textbookSubscription/openingPlan' }
+      }
+    ]
+  },
+  {
     path: '/test',
     component: Layout,
     permissions: ['system:role:edit'],

@@ -58,6 +58,12 @@ export default {
       method: 'put',
       data
     })
+  },
+  getCourseByOpeningPlanId(id) {
+    return request({
+      url: `/plan/course/${id}`,
+      method: 'get'
+    })
   }
 }
 

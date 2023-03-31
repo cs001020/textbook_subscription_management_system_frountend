@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="教材信息" :visible.sync="open">
+  <el-dialog title="教材信息" :visible.sync="open" :append-to-body="append">
     <table>
       <tbody>
         <tr>
@@ -53,7 +53,7 @@
           <td class="title">库存：</td>
           <td>{{ textbookDate.stock }}</td>
         </tr>
-        <tr style="height: 36px">
+        <tr v-if="textbookDate.state" style="height: 36px">
           <td class="title">
             状态:
           </td>
@@ -91,6 +91,12 @@ export default {
   filters: {
     textbookStateFilter(state) {
       return textbookState[state]
+    }
+  },
+  props: {
+    append: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

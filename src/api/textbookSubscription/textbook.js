@@ -53,6 +53,13 @@ export default {
       url: `/textbook/discard/${id}`,
       method: 'put'
     })
+  },
+  checkbookName(name) {
+    return request({
+      url: `/textbook/checkbookName`,
+      method: 'get',
+      params: { name }
+    })
   }
 }
 
