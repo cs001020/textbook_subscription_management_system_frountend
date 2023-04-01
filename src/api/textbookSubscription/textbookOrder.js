@@ -13,6 +13,12 @@ export default {
       url: `/textbookOrder/grant/${id}`,
       method: 'post'
     })
+  },
+  getTextBook(id) {
+    return request({
+      url: `/textbookOrder/textbook/${id}`,
+      method: 'get'
+    })
   }
 }
 

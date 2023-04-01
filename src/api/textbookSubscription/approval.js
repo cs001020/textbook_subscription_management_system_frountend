@@ -60,6 +60,13 @@ export default {
       data
     })
   },
+  reSubmit(id, data) {
+    return request({
+      url: `/approval/reSubmit/${id}`,
+      method: 'post',
+      data
+    })
+  },
   getDetails(id) {
     return request({
       url: `/approval/details/${id}`,

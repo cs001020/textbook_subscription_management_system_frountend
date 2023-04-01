@@ -140,27 +140,28 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/textbookSubscription/textbook-select',
+    path: '/textbookSubscription/opening-plan',
     component: Layout,
+    hidden: true,
     children: [
       {
-        path: ':openingPlanId(\\d+)',
+        path: 'textbook-select/:openingPlanId(\\d+)',
         component: () => import('@/views/textbookSubscription/openingPlan/select.vue'),
-        name: 'TextbookSelect',
+        name: 'TextbookSelect1',
         meta: { title: '选择教材', activeMenu: '/textbookSubscription/openingPlan' }
       }
     ]
   },
   {
-    path: '/test',
+    path: '/textbookSubscription/approval-re',
     component: Layout,
-    permissions: ['system:role:edit'],
+    hidden: true,
     children: [
       {
-        path: 'test',
-        component: () => import('@/views/test.vue'),
-        name: 'test',
-        meta: { title: '测试', icon: '404' }
+        path: 'textbook-select/:approvalId(\\d+)',
+        component: () => import('@/views/textbookSubscription/approval/reSelect.vue'),
+        name: 'TextbookSelect2',
+        meta: { title: '重新申请', activeMenu: '/textbookSubscription/approval' }
       }
     ]
   }

@@ -7,13 +7,6 @@
       style="width: 100%"
     >
       <el-table-column label="编号" prop="id" width="120" />
-      <el-table-column label="教师" width="150">
-        <template slot-scope="{row}">
-          <el-row>
-            <span>{{ row.teacher.name }}</span>
-          </el-row>
-        </template>
-      </el-table-column>
       <el-table-column label="教学组" width="150" prop="teachingGroup.name" :show-overflow-tooltip="true" />
       <el-table-column label="学院" width="150" prop="secondaryCollege.name" />
       <el-table-column label="班级" width="150" prop="grade" :show-overflow-tooltip="true">
@@ -46,7 +39,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="$router.push({path:'/textbookSubscription/textbook-select/' + scope.row.id})"
+            @click="$router.push({path:'/textbookSubscription/opening-plan/textbook-select/' + scope.row.id})"
           >选择教材</el-button>
         </template>
       </el-table-column>
@@ -86,8 +79,7 @@ export default {
   data() {
     return {
       tableData: [],
-      loading: true,
-      open: false
+      loading: true
     }
   },
   created() {

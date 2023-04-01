@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="open" title="详情">
+  <el-dialog :visible.sync="open" title="教材详情">
     <el-card v-for="textbookDate in data " :key="textbookDate.id" class="card-box">
       <table>
         <tbody>

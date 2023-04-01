@@ -6,6 +6,13 @@ export default {
       url: `/feedback/get/${textbookId}`,
       method: 'get'
     })
+  },
+  submitFeedback(data) {
+    return request({
+      url: `/feedback/add`,
+      method: 'post',
+      data
+    })
   }
 }
 
