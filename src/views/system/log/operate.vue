@@ -281,8 +281,12 @@ export default {
         responseType: 'arraybuffer',
         data: this.queryParams
       }).then(res => {
-        const blob = new Blob([res.data])
-        saveAs(blob, `OperateLog_${new Date().getTime()}.xlsx`)
+        if (res.code === 200) {
+          const blob = new Blob([res.data])
+          saveAs(blob, `OperateLog_${new Date().getTime()}.xlsx`)
+        } else {
+          this.$message({ type: 'error', message: '导出异常' })
+        }
       })
     }
   }
