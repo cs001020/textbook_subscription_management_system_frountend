@@ -66,7 +66,7 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/401',
+    path: '/403',
     component: () => import('@/views/commons/error-page/401'),
     hidden: true
   },

@@ -57,7 +57,7 @@
     >
       <el-table-column prop="name" label="菜单名称" :show-overflow-tooltip="true" width="160" />
       <el-table-column prop="icon" label="图标" width="100">
-        <template slot-scope="scope">
+        <template v-if="scope.row.icon" slot-scope="scope">
           <i v-show="showElIcon(scope.row.icon)" :class="scope.row.icon" />
           <svg-icon :icon-class="scope.row.icon" />
         </template>

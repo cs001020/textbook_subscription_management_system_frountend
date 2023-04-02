@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getRequestHand, getToken } from '@/utils/auth'
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -68,6 +69,11 @@ service.interceptors.response.use(
             location.reload()
           })
         })
+      }
+      // 无权限
+      if (res.code === 403) {
+        // 调整至403页面
+        router.replace('/403')
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
