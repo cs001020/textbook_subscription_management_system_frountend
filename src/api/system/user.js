@@ -112,3 +112,19 @@ export function updateAuthRole(params) {
     params
   })
 }
+
+export function all() {
+  return request({
+    url: `/user/allPart`,
+    method: 'get'
+  })
+}
+
+export function add(data) {
+  return request({
+    url: `/user/add`,
+    method: 'post',
+    data
+  })
+}
+

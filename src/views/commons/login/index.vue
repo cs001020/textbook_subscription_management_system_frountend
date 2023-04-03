@@ -62,7 +62,7 @@
       >
         <div class="captcha-div">
           <el-input v-model="loginForm.captcha" class="captcha-input" @keyup.enter.native="handleLogin" />
-          <el-image style="height: 50px" :src="imgCaptcha.captchaBase64Data" @click="getImgCaptcha()" />
+          <el-image style="height: 50px" :src="imgCaptcha.captchaBase64Data" @click.native="getImgCaptcha()" />
         </div>
       </el-form-item>
 
