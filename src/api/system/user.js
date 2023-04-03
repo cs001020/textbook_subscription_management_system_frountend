@@ -15,6 +15,34 @@ export function getInfo() {
   })
 }
 
+export function getProfile() {
+  return request({
+    url: '/user/profile',
+    method: 'get'
+  })
+}
+export function uploadAvatar(data) {
+  return request({
+    url: '/user/avatar',
+    method: 'post',
+    data
+  })
+}
+export function updateProfile(data) {
+  return request({
+    url: '/user/profile',
+    method: 'post',
+    data
+  })
+}
+export function updateUserPwd(data) {
+  return request({
+    url: '/user/pwd',
+    method: 'post',
+    data
+  })
+}
+
 export function logout() {
   return request({
     url: '/user/logout',

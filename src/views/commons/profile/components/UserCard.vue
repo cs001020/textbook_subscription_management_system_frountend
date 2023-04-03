@@ -3,29 +3,17 @@
     <div slot="header" class="clearfix">
       <span>个人信息</span>
     </div>
-    <div class="user-profile">
-      <div class="box-center">
-        <pan-thumb :image="`https://kodo.warframe.top/${user.avatar}`" :height="'100px'" :width="'100px'" :hoverable="false">
-          <div>Hello</div>
-          {{ user.role }}
-        </pan-thumb>
-      </div>
-      <div class="box-center">
-        <div class="user-name text-center">{{ user.name }}</div>
-        <div class="user-role text-center text-muted">角色：{{ user.role | uppercaseFirst }}</div>
-      </div>
-    </div>
     <div>
       <div class="text-center">
-        <userAvatar :user="user" />
+        <userAvatar />
       </div>
       <ul class="list-group list-group-striped">
         <li class="list-group-item">
           学号/工号：
-          <div class="pull-right">{{ user.id }}</div>
+          <div class="pull-right">{{ user.account }}</div>
         </li>
         <li class="list-group-item">
-          用户名称：
+          用户昵称：
           <div class="pull-right">{{ user.name }}</div>
         </li>
         <li class="list-group-item">
@@ -33,16 +21,12 @@
           <div class="pull-right">{{ user.phoneNumber }}</div>
         </li>
         <li class="list-group-item">
-          所属单位：
-          <div v-if="user.dept" class="pull-right">{{ user.dept }}</div>
+          二级学院：
+          <div class="pull-right">{{ user.secondaryCollege }}</div>
         </li>
         <li class="list-group-item">
           创建时间：
-          <div class="pull-right">{{ user.creatTime | parseTime }}</div>
-        </li>
-        <li class="list-group-item">
-          用户名称：
-          <div class="pull-right">{{ user.roles }}</div>
+          <div class="pull-right">{{ parseTime(user.createTime,'{y}-{m}-{d}') }}</div>
         </li>
       </ul>
     </div>
@@ -50,16 +34,11 @@
 </template>
 
 <script>
-import PanThumb from '@/components/PanThumb'
-// eslint-disable-next-line
-import user from '@/api/system/user'
+import UserAvatar from './UserAvatar'
 import { parseTime } from '@/utils'
 
 export default {
-  filters: {
-    parseTime
-  },
-  components: { PanThumb },
+  components: { UserAvatar },
   props: {
     user: {
       type: Object,
@@ -70,6 +49,9 @@ export default {
         }
       }
     }
+  },
+  methods: {
+    parseTime
   }
 }
 </script>

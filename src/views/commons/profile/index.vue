@@ -12,25 +12,21 @@
           <el-card>
             <el-tabs v-model="activeTab">
               <el-tab-pane label="基本资料" name="account">
-                <account :user="user" />
+                <account :user="userFrom" @ok="getUser" />
               </el-tab-pane>
               <el-tab-pane label="修改密码" name="activity">
                 <activity />
               </el-tab-pane>
-              <!-- <el-tab-pane label="Timeline" name="timeline">
-                <timeline />
-              </el-tab-pane> -->
             </el-tabs>
           </el-card>
         </el-col>
-
       </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { getProfile } from '@/api/system/user'
 import UserCard from './components/UserCard'
 import Activity from './components/Activity'
 import Account from './components/Account'
@@ -41,28 +37,19 @@ export default {
   data() {
     return {
       user: {},
+      userFrom: {},
       activeTab: 'account'
     }
-  },
-  computed: {
-    ...mapGetters([
-      'name',
-      'avatar',
-      'phoneNumber',
-      'roles'
-    ])
   },
   created() {
     this.getUser()
   },
   methods: {
     getUser() {
-      this.user = {
-        name: this.name,
-        role: this.roles.join(' | '),
-        email: 'admin@test.com',
-        avatar: this.avatar
-      }
+      getProfile().then(res => {
+        this.user = res.data
+        this.userFrom = { ...res.data }
+      })
     }
   }
 }

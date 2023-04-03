@@ -138,6 +138,9 @@ const actions = {
 
     // reset visited views and cached views
     dispatch('tagsView/delAllViews', null, { root: true })
+  },
+  resetAvatar({ commit }, avatar) {
+    commit('SET_AVATAR', avatar)
   }
 }
 
