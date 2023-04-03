@@ -96,12 +96,19 @@ export const constantRoutes = [
         meta: { title: 'profile', icon: 'user', noCache: true }
       }
     ]
-  },
-  // TODO 鉴权按需导入
+  }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const dynamicRoutes = [
   {
     path: '/system/user-auth',
     hidden: true,
     component: Layout,
+    permissions: ['system:user:auth'],
     children: [
       {
         path: 'role/:userId(\\d+)',
@@ -115,7 +122,7 @@ export const constantRoutes = [
     path: '/system/role-auth',
     component: Layout,
     hidden: true,
-    permissions: ['system:role:edit'],
+    permissions: ['system:role:auth'],
     children: [
       {
         path: 'user/:roleId(\\d+)',
@@ -129,7 +136,7 @@ export const constantRoutes = [
     path: '/academic/add-plan',
     component: Layout,
     hidden: true,
-    permissions: ['system:role:edit'],
+    permissions: ['academic:openingPlan:add'],
     children: [
       {
         path: 'add',
@@ -143,6 +150,7 @@ export const constantRoutes = [
     path: '/textbookSubscription/opening-plan',
     component: Layout,
     hidden: true,
+    permissions: ['textbookSubscription:openingPlan:submit'],
     children: [
       {
         path: 'textbook-select/:openingPlanId(\\d+)',
@@ -156,6 +164,7 @@ export const constantRoutes = [
     path: '/textbookSubscription/approval-re',
     component: Layout,
     hidden: true,
+    permissions: ['textbookSubscription:audit:resubmit'],
     children: [
       {
         path: 'textbook-select/:approvalId(\\d+)',
@@ -165,13 +174,6 @@ export const constantRoutes = [
       }
     ]
   }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
 ]
 
 const createRouter = () => new Router({

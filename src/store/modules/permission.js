@@ -1,28 +1,10 @@
-import { constantRoutes } from '@/router'
+import { constantRoutes, dynamicRoutes } from '@/router'
 import Layout from '@/layout/index.vue'
 import ParentView from '@/layout/ParentView/index.vue'
 import store from '@/store'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 
-/**
- * Use meta.role to determine if the current user has permission
- * @param roles
- * @param route
- */
-// eslint-disable-next-line no-unused-vars
-// function hasPermission(roles, route) {
-//   if (route.meta && route.meta.roles) {
-//     return roles.some(role => route.meta.roles.includes(role))
-//   } else {
-//     return true
-//   }
-// }
-
-/**
- * Filter asynchronous routing tables by recursion
- * @param routes asyncRoutes
- * @param roles
- */
+// 遍历后台传来的路由字符串，转换为组件对象
 export function filterAsyncRoutes(routes, roles) {
   const res = []
 
@@ -47,9 +29,36 @@ export function filterAsyncRoutes(routes, roles) {
     }
     res.push(tmp)
   })
-  // 404 page must be placed at the end !!!
-  res.push({ path: '*', redirect: '/404', hidden: true })
   return res
+}
+// 动态路由遍历，验证是否具备权限
+export function filterDynamicRoutes(routes) {
+  const res = []
+  routes.forEach(route => {
+    if (route.permissions) {
+      if (hasPermissionOr(route.permissions)) {
+        res.push(route)
+      }
+    }
+  })
+  return res
+}
+
+// 验证用户是否含有指定权限，只需包含其中一个
+function hasPermissionOr(permissions) {
+  return permissions.some(item => {
+    return authPermission(item)
+  })
+}
+function authPermission(permission) {
+  const permissions = store.getters && store.getters.permissions
+  if (permission && permission.length > 0) {
+    return permissions.some(v => {
+      return v === permission
+    })
+  } else {
+    return false
+  }
 }
 
 const state = {
@@ -68,8 +77,12 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       const accessedRoutes = filterAsyncRoutes(store.getters.routers, roles)
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      const permissionsRouters = filterDynamicRoutes(dynamicRoutes)
+      const routers = accessedRoutes.concat(permissionsRouters)
+      // 404 page must be placed at the end !!!
+      routers.push({ path: '*', redirect: '/404', hidden: true })
+      commit('SET_ROUTES', routers)
+      resolve(routers)
     })
   }
 }

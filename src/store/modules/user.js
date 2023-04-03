@@ -9,7 +9,8 @@ const state = {
   avatar: '',
   introduction: '',
   roles: [],
-  routers: []
+  routers: [],
+  permissions: []
 }
 
 const mutations = {
@@ -33,6 +34,9 @@ const mutations = {
   },
   SET_ROUTERS: (state, routers) => {
     state.routers = routers
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions
   }
 }
 
@@ -63,13 +67,14 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, routers, name, avatar, introduction } = data
+        const { roles, routers, permissions, name, avatar, introduction } = data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
         commit('SET_ROUTERS', routers)
+        commit('SET_PERMISSIONS', permissions)
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
